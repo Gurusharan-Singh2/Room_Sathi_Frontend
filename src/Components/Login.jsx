@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
 
 function Login() {
     const [islogin,setlogin]=useState(false)
 
-    useEffect(
-        ()=>{
-            if(localStorage.getItem('user-info')){
-                history.pushState("/add")
-            }
-        },[]
-    );
+     useEffect(() => {
+    if (localStorage.getItem("user-info")) {
+      navigate("/add");
+    }
+  }, [navigate]);
+
     const [username,setusername]=useState("");
     const[password,setpassword]=useState("");
     const [email,setemail]=useState("");
@@ -26,9 +27,9 @@ function Login() {
         });
         result= await result.json();
 localStorage.setItem('user-info' ,JSON.stringify(result));
-history.pushState("/add")
+navigate("/add") 
+}
 
-    }
   return (
     <div className='w-[430px] bg-white p-8 rounded-2xl shadow-lg'> 
     <div className='flex justify-center mb-4 '>
@@ -40,7 +41,7 @@ history.pushState("/add")
     <div className='absolute top-0 h-full w-1/2 rounded-full bg-gradient-to-r from-blue-700 via-cyan-600 to-cyan-200'></div>
     </div>
 
-     <form className='space-y-4'>
+     <form onSubmit={(e)=>{e.preventDefault(); login()}} className='space-y-4'>
             {!islogin && (
                 // signup field name
                <div className='' >
