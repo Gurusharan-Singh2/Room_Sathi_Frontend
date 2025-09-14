@@ -1,8 +1,12 @@
 import React from 'react'
-
+import Login from './Components/Login'
+import Otp from './Components/Otp'
 const App = () => {
   return (
-    <div className='text-3xl text-red-500'>App</div>
+    <div className='w-full h-screen grid place-items-center bg-cyan-400'>
+    {/* <Login/> */}
+    <Otp/>
+   </div>
   )
 }
 
