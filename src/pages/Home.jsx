@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section */}
+      {}
       <section className="flex-1 flex flex-col items-center justify-center text-center bg-gradient-to-r from-blue-50 to-green-50 px-6">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
           Welcome to <span className="text-blue-600">Room-Sathi</span> 🏠
