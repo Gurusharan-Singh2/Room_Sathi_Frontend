@@ -4,12 +4,18 @@ import { useEffect } from "react";
 import ProfileDropdown from "../Components/Profile";
 import Login_Signup from "../pages/Login-Signup";
 import HomePage from "../pages/Home";
+import Addinfo from "../Components/Addinfo";
+import { Navbar, } from "../Components/Navbar";
+import FindRoom from "../pages/FindRoom";
+import PostRoom from "../pages/PostRoom";
+import FindRoommates from "../pages/FindRoommates";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
 
 const AppWrapper = () => {
   const { login, isLoggedIn,id } = useAuthStore();
   const navigate = useNavigate();
 
-  console.log(id);
   
 
 useEffect(() => {
@@ -33,11 +39,17 @@ useEffect(() => {
  
   
   return (<>
-            {isLoggedIn() && <ProfileDropdown />} 
+          
+            <Navbar/>
  <Routes>
       
       <Route path="/" element={<HomePage/>} />
       <Route path="/login-signup" element={<Login_Signup />} />
+      <Route path="/find-room" element={<FindRoom/>} />
+      <Route path="/post-room" element={<PostRoom/>} />
+      <Route path="/find-roommates" element={<FindRoommates/>} />
+      <Route path="/about" element={< About/>} />
+      <Route path="/contact" element={<Contact/>} />
     </Routes>
   </>
    

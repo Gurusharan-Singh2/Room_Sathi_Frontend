@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAuthStore from "../Store/authStore";
 import { fetchProfile } from "../../utils/apis";
 
+
 function ProfileDropdown() {
   const navigate = useNavigate();
   const { id, logout, name } = useAuthStore();
@@ -36,10 +37,10 @@ function ProfileDropdown() {
   }, []);
 
   return (
-    <div className="absolute top-1 right-1" ref={dropdownRef}>
+    <div ref={dropdownRef}>
       <div
         onClick={() => setOpen(!open)}
-        className="w-14 h-14 rounded-full cursor-pointer overflow-hidden border-2 border-cyan-500 shadow-md transition-transform hover:scale-105"
+        className="w-14 h-14 rounded-full  cursor-pointer overflow-hidden  shadow-md transition-transform hover:scale-105"
         title={profile?.name || "User"}
       >
         {profile?.signedUrl ? (
@@ -56,13 +57,26 @@ function ProfileDropdown() {
       </div>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden animate-fade-in">
+        <div className="absolute p-4 right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden animate-fade-in">
           <div className="p-4 flex flex-col items-center border-b border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800">
               {profile?.username || "User"}
             </h2>
+
             <p className="text-sm text-gray-500">{profile?.email || "No email"}</p>
           </div>
+          
+            <a href="http://localhost:5173/info-form">add info</a>
+     
+      {/* {profile?.location || "no location"} */}
+     {/* <b>Location</b> :bhaisamau crossing bkt lucknow
+      </p>
+
+      <div><b>contact info</b></div>
+      <p> e-mail:vikas@123</p>
+       <p>phone:854507890</p>
+        <div><b>smoking status</b> :None</div> */}
+       
 
           <button
             onClick={handleLogout}
