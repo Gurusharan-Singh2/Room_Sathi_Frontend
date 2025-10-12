@@ -7,7 +7,7 @@ import AppWrapper from "./Provider/AppWrapper";
 const App = () => {
   
   return (
-    <div className="w-full h-screen grid place-items-center bg-neutral-300 relative">
+    <div className="max-w-screen box-border h-screen grid place-items-center bg-neutral-300 relative">
       <BrowserRouter>
 
         <AppWrapper />

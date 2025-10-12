@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import Logo from '../../public/b.png'
+import Logo from '../assets/b.png';
 import ProfileDropdown from './Profile'
 import { Home, BedDouble, PlusCircle, Users, Info, Phone } from "lucide-react";
 import useAuthStore from '../Store/authStore';

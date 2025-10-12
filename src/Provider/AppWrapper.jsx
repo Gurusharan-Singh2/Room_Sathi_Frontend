@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import ProfileDropdown from "../Components/Profile";
 import Login_Signup from "../pages/Login-Signup";
 import HomePage from "../pages/Home";
-import Addinfo from "../Components/Addinfo";
 import { Navbar, } from "../Components/Navbar";
 import FindRoom from "../pages/FindRoom";
 import PostRoom from "../pages/PostRoom";
