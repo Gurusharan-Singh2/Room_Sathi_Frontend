@@ -1,44 +1,35 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const FindRoom = () => {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const [params, setParams] = useState({ lat: "", lng: "", radius: "" });
 
-  // Fetch rooms from API
-  const fetchRooms = async () => {
-    try {
-      setLoading(true);
-      setError("");
+ 
 
-      const response = await axios.get("https://room-sathi-backend.onrender.com/api/room/", {
+      const{data:rooms,isFetching:loading,isError}=useQuery({
+        queryKey:["rooms"],
+        queryFn:async()=>{
+ const response = await axios.get("https://room-sathi-backend.onrender.com/api/room/", {
         params: {
           lat: params.lat,
           lng: params.lng,
           radius: params.radius,
         },
       });
+      console.log("Response",response);
+      
+      return response.data;
+        },
+          staleTime: 10 * 60 * 1000,
+      })
 
-      setRooms(response.data); // Assuming backend returns an array of rooms
-    } catch (err) {
-      console.error("Error fetching rooms:", err);
-      setError("Failed to fetch rooms. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      
 
-  // Optional: fetch when params change
-  useEffect(() => {
-    if (params.lat && params.lng && params.radius) {
-      fetchRooms();
-    }
-  }, [params]);
 
   return (
-    <div className="min-h-auto bg-gray-100 p-16">
+    <div className="h-auto mt-5  bg-gray-100 p-16">
       <h1 className="text-3xl font-bold mb-4">Available Rooms</h1>
 
       {/* Input for query params */}
@@ -64,24 +55,19 @@ const FindRoom = () => {
           onChange={(e) => setParams({ ...params, radius: e.target.value })}
           className="border p-2 rounded"
         />
-        <button
-          onClick={fetchRooms}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Search
-        </button>
+        
       </div>
 
       {/* Loading & Error */}
       {loading && <p>Loading rooms...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {isError && <p className="text-red-500">Something went wrong ..... </p>}
 
       {/* Rooms List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {rooms.map((room, index) => (
+        {rooms?.map((room, index) => (
           <div
             key={index}
-            className="bg-white rounded-lg shadow p-4 flex flex-col gap-2"
+            className=" rounded-lg shadow p-4 flex flex-col gap-2"
           >
             <h2 className="font-bold text-xl">{room.title}</h2>
             <p>{room.description}</p>

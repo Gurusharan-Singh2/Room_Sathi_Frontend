@@ -37,7 +37,7 @@ function ProfileDropdown() {
   }, []);
 
   return (
-    <div ref={dropdownRef}>
+    <div ref={dropdownRef} className=" h-auto ">
       <div
         onClick={() => setOpen(!open)}
         className="w-14 h-14 rounded-full  cursor-pointer overflow-hidden  shadow-md transition-transform hover:scale-105"
@@ -65,8 +65,8 @@ function ProfileDropdown() {
 
             <p className="text-sm text-gray-500">{profile?.email || "No email"}</p>
           </div>
-          
-            <a href="http://localhost:5173/info-form">add info</a>
+            
+            <a className=" text-Font-dark hover:text-Primary hover:underline" href="http://localhost:5173/info-form">add info</a>
      
       {/* {profile?.location || "no location"} */}
      {/* <b>Location</b> :bhaisamau crossing bkt lucknow
@@ -76,7 +76,7 @@ function ProfileDropdown() {
       <p> e-mail:vikas@123</p>
        <p>phone:854507890</p>
         <div><b>smoking status</b> :None</div> */}
-       
+       <button className='w-[8rem] text-center  bg-gray-300 hover:bg-blue-600 text-black rounded-2xl px-3 py-2 ml-2 hover:scale-105 hover:shadow-lg transition duration-200 '>Edit profile</button>
 
           <button
             onClick={handleLogout}

@@ -20,12 +20,12 @@ const Contact = () => {
   };
 
   return (
-    <div className="h-auto w-full mt-15 bg-Secondary flex flex-col items-center text-gray-800">
+    <div className="h-auto w-full mt-15 bg-gray-50 flex flex-col items-center text-gray-800">
      
      
-      <section className="w-full py-16 text-center bg-Secondary text-Font-dark">
+      <section className="w-full py-16 text-center text-Font-dark">
         <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
-        <p className="text-xl">
+        <p className="text-xl text-gray-600">
           We'd love to hear from you! Reach out anytime — we're here to help.
         </p>
       </section>
@@ -34,7 +34,7 @@ const Contact = () => {
       
 
 
-        <div className="w-full md:w-[45%] bg-Secondary p-8 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
+        <div className="w-full md:w-[45%] bg-gray-100 p-8 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
           <h2 className="text-3xl font-semibold mb-6 text-Font-dark">
             Send us a message
           </h2>
@@ -73,7 +73,7 @@ const Contact = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl hover:bg-fuchsia-600 transition duration-300 w-full"
+              className="flex items-center justify-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-fuchsia-600 transition duration-300 w-full"
             >
               Send Message
             </button>
@@ -81,7 +81,7 @@ const Contact = () => {
         </div>
 
 
-        <div className="w-full md:w-[40%] p-8 bg-Secondary rounded-2xl shadow-md hover:shadow-xl transition duration-300">
+        <div className="w-full md:w-[40%] p-8 bg-gray-100 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
           <h2 className="text-3xl font-semibold mb-6 text-Font-dark">
             Get in touch
           </h2>
@@ -104,7 +104,7 @@ const Contact = () => {
             <p className="text-gray-600 mb-4">
               Need quick help? Chat with our support team in real-time.
             </p>
-            <button className="flex items-center justify-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl hover:bg-fuchsia-600 transition duration-300 w-full">
+            <button className="flex items-center justify-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-fuchsia-600 transition duration-300 w-full">
               <MessageCircle className="w-6 h-6" />
               Start Live Chat
             </button>
