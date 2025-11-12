@@ -4,6 +4,7 @@ import Footer from '../Components/footer';
 import { Search,ShieldCheck, Sparkles, Lock } from "lucide-react";
 
 import room from '../assets/roompic.png';
+import room2 from '../assets/R.jpg';
 import RoomCard from '../Components/RoomCard';
 
 
@@ -11,40 +12,102 @@ const HomePage = () => {
   const [isHover,setIsHover]=useState(false);
 
   const Rooms=[
-    {
-      image:room,
+     {
+      image:[room,room2,room,room2],
       title:"Private Room near me",
       description:"Explore listings and connect with compatible roommates",
       price:500,
       status:"Private",
       services:[
         "Wifi",
+        "Sun Deck",
         "Gym"
       ]
     },
-    {
-      image:room,
+     {
+      image:[room,room,room,room],
       title:"Private Room near me",
       description:"Explore listings and connect with compatible roommates",
-       price:500,
+      price:500,
       status:"Private",
       services:[
         "Wifi",
+        "Sun Deck",
         "Gym"
       ]
     },
-    {
-      image:room,
+     {
+      image:[room,room,room,room],
       title:"Private Room near me",
       description:"Explore listings and connect with compatible roommates",
-       price:500,
+      price:500,
       status:"Private",
       services:[
         "Wifi",
+        "Sun Deck",
         "Gym"
       ]
     },
-    
+     {
+      image:[room,room,room,room],
+      title:"Private Room near me",
+      description:"Explore listings and connect with compatible roommates",
+      price:500,
+      status:"Private",
+      services:[
+        "Wifi",
+        "Sun Deck",
+        "Gym"
+      ]
+    },
+     {
+      image:[room,room,room,room],
+      title:"Private Room near me",
+      description:"Explore listings and connect with compatible roommates",
+      price:500,
+      status:"Private",
+      services:[
+        "Wifi",
+        "Sun Deck",
+        "Gym"
+      ]
+    },
+     {
+      image:[room,room,room,room],
+      title:"Private Room near me",
+      description:"Explore listings and connect with compatible roommates",
+      price:500,
+      status:"Private",
+      services:[
+        "Wifi",
+        "Sun Deck",
+        "Gym"
+      ]
+    },
+     {
+      image:[room,room,room,room],
+      title:"Private Room near me",
+      description:"Explore listings and connect with compatible roommates",
+      price:500,
+      status:"Private",
+      services:[
+        "Wifi",
+        "Sun Deck",
+        "Gym"
+      ]
+    },
+     {
+      image:[room,room,room,room],
+      title:"Private Room near me",
+      description:"Explore listings and connect with compatible roommates",
+      price:500,
+      status:"Private",
+      services:[
+        "Wifi",
+        "Sun Deck",
+        "Gym"
+      ]
+    },
   ]
   return (
     <div className='bg-gray-50 h-auto w-full  flex justify-center items-center' > 
@@ -106,14 +169,13 @@ campus.</p>
 
 
  
-       <div className='flex h-auto w-full justify-center pt-10   gap-6 py-2 ' >
-     
-{
-  Rooms.map((r)=> <RoomCard data={r} isHover={isHover}/>)
+     <div className="flex gap-4 w-full max-w-screen justify-between  overflow-x-scroll px-4 py-6 scroll-smooth hide-scrollbar">
+  {Rooms.map((r, i) => (
+    <RoomCard data={r} isHover={isHover} />
+  ))}
+</div>
 
-}
 
- </div>
   
 
 

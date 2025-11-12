@@ -1,11 +1,53 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { Icons } from '../../utils/icon'
 
 
 const RoomCard = ({data,isHover}) => {
+
+    const [image,setImage] =useState(0)
+
+    const handleNext=()=>{
+        if(!data.image[image+1]){
+           return;
+        }else{
+  setImage((p)=>
+        
+        p=p+1)
+        }
+
+        
+        
+      
+        
+    }
+    const handleBack=()=>{
+        if(!data.image[image-1]){
+           return;
+        }else{
+  setImage((p)=>
+        
+        p=p-1)
+        }
+
+        
+        
+      
+        
+    }
+
+    
+
+    
+   
   return (
-    <div  className='  inline-block border bg-gray-100 text-black h-auto   w-[18rem]  rounded-2xl border-none hover:border-none hover:shadow-lg transition duration-300'>
-                  <img className='rounded-t-2xl' src={data.image} alt="room picture" />
+    <div  className=' border bg-gray-100 text-black h-auto  min-w-[25%]  rounded-2xl border-none hover:border-none hover:shadow-lg transition duration-300'>
+                  <img className='rounded-t-2xl' src={data.image[image]} alt="room picture" />
+
+        <div className='flex justify-between flex-1 mt-3'>
+            <button className='bg-amber-700 text-white p-1 rounded-lg' onClick={handleBack}>Back</button>
+            <button className='bg-green-700 text-white p-1 rounded-lg' onClick={()=>handleNext()}>Next</button>
+            
+            </div>          
     
           <div className='flex flex-col gap-2 p-2'>
               <h2 className='text-xl font-bold pt-6'>{data.title}</h2>
