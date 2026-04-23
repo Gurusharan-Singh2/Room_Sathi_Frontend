@@ -1,168 +1,140 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { Icons } from '../../utils/icon'
-
-
-
- import RoomCard from "../Components/RoomCard"; // Uncomment if you have this component
-// import room from "../assets/room.jpg"; // Replace with your room image import
 
 const FindRoom = () => {
-  const [params, setParams] = useState({ lat: "", lng: "", radius: "" });
+  const location = useLocation();
 
-  // Fetch function using params
-  const fetchRooms = async () => {
-    const response = await axios.get("https://room-sathi-backend.onrender.com/api/room/", {
-      params: {
-        lat: params.lat || undefined,
-        lng: params.lng || undefined,
-        radius: params.radius || undefined,
-      },
-    });
-    console.log("Response", response.data);
-    return response.data;
-  };
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // React Query Hook
-  const {
-    data: rooms,
-    isFetching: loading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["rooms", params],
-    queryFn: fetchRooms,
-    enabled: false, // Prevent auto-fetch
-    staleTime: 10 * 60 * 1000,
-  });
+  const queryParams = new URLSearchParams(location.search);
 
-  // Sample static data
-  const sampleRooms = [
-    {
-      image: "/room1.jpg",
-      title: "Private Room near me",
-      description: "Explore listings and connect with compatible roommates",
-      price: 500,
-      status: "Private",
-      services: ["Wifi", "Sun Deck", "Gym"],
-    },
-    {
-      image: "/room2.jpg",
-      title: "Shared Room near me",
-      description: "Comfortable space with friendly roommates",
-      price: 300,
-      status: "Shared",
-      services: ["Wifi", "Security", "Parking"],
-    },
-    {
-      image: "/room3.jpg",
-      title: "Studio Apartment near me",
-      description: "Modern room setup with essential facilities",
-      price: 700,
-      status: "Studio",
-      services: ["Wifi", "TV", "Swimming Pool"],
-    },
-  ];
+  const address = queryParams.get("address") || "";
+  const area = queryParams.get("area") || "";
+  const status = queryParams.get("status") || "";
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setLoading(true);
+
+        console.log("Sending Query:", { address, area, status }); // 🔍 DEBUG
+
+        const res = await axios.get(
+          `http://localhost:3005/api/rooms?address=${address}&area=${area}&status=${status}`
+        );
+
+        console.log("Response:", res.data);
+
+        setRooms(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, [address, area, status]);
 
   return (
-    <div className="h-auto mt-5 bg-gray-100 p-8 md:p-16">
-      <h1 className="text-3xl font-bold mb-4">Available Rooms</h1>
+  <div className="min-h-screen bg-gradient-to-br mt-20 w-full from-gray-100 to-gray-200 p-6">
+  
+  <h1 className="text-3xl font-bold mb-6 text-center">
+    🏠 Available Rooms in Ypur Area
+  </h1>
 
-      {/* Input for query params */}
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Latitude"
-          value={params.lat}
-          onChange={(e) => setParams({ ...params, lat: e.target.value })}
-          className="border p-2 rounded w-full md:w-auto"
-        />
-        <input
-          type="text"
-          placeholder="Longitude"
-          value={params.lng}
-          onChange={(e) => setParams({ ...params, lng: e.target.value })}
-          className="border p-2 rounded w-full md:w-auto"
-        />
-        <input
-          type="text"
-          placeholder="Radius (km)"
-          value={params.radius}
-          onChange={(e) => setParams({ ...params, radius: e.target.value })}
-          className="border p-2 rounded w-full md:w-auto"
-        />
-        <button
-          onClick={refetch}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-          Search
-        </button>
-      </div>
+  {/* 🔄 Loading */}
+  {loading && <p className="text-center">Loading...</p>}
 
-      {/* Loading & Error */}
-      {loading && <p>Loading rooms...</p>}
-      {isError && <p className="text-red-500">Something went wrong...</p>}
+  {/* ❌ No Rooms */}
+  {!loading && rooms.length === 0 && (
+    <p className="text-center text-red-500 font-semibold">
+      ❌ No rooms found
+    </p>
+  )}
 
-      {/* Static Sample Rooms */}
-      <div className="flex flex-wrap justify-center gap-6 py-6">
-        {sampleRooms.map((r, i) => (
+  {/* ✅ Rooms Grid */}
+  {!loading && rooms.length > 0 && (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {rooms.map((room) => {
+        const image = room.image || "/fallback.jpg";
+
+        return (
           <div
-            key={i}
-            className="bg-white rounded-xl shadow p-4 w-80 hover:scale-105 transition"
+            key={room._id}
+            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
           >
-            <img
-              src={r.image}
-              alt={r.title}
-              className="w-full h-48 object-cover rounded-lg"
-            />
-            <h2 className="font-bold text-xl mt-2">{r.title}</h2>
-            <p className="text-gray-600">{r.description}</p>
-            <p className="mt-1 font-semibold">₹{r.price} / month</p>
-            <p className="text-sm text-gray-500">{r.status}</p>
-            <div className="flex gap-2 mt-2 flex-wrap">
-              {r.services.map((s, j) => (
-                <span
-                  key={j}
-                  className="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
-                >
-                  {s}
-                </span>
-              ))}
+            {/* 🖼 Image */}
+            <div className="relative">
+              <img
+                src={image}
+                alt={room.title}
+                className="w-full h-52 object-cover"
+              />
+{/* 
+              ❤️ Wishlist button
+              <button
+                onClick={() => toggleWishlist(room)}
+                className="absolute top-3 right-3 text-2xl"
+              >
+                {isSaved(room._id) ? "❤️" : "🤍"}
+              </button> */}
+
+              {/* 🏷 Status */}
+              <span className="absolute bottom-3 left-3 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                {room.status}
+              </span>
+            </div>
+
+            {/* 📄 Content */}
+            <div className="p-4">
+              <h2 className="text-xl font-bold">{room.title}</h2>
+
+              <p className="text-gray-600 text-sm mt-1">
+                {room.description || "No description"}
+              </p>
+
+              {/* 💰 Price */}
+              <p className="mt-3 text-lg font-semibold text-green-600">
+                ₹{room.price} / month
+              </p>
+
+              {/* 📍 Address */}
+              <p className="text-sm text-gray-500 mt-1">
+                📍 {room.address || "Location not available"}
+              </p>
+
+              {/* 🧩 Services */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {room.services?.length > 0 ? (
+                  room.services.map((service, i) => (
+                    <span
+                      key={i}
+                      className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs"
+                    >
+                      {service}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400 text-xs">
+                    No services
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* API Fetched Rooms */}
-      {rooms && rooms.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {rooms.map((room, index) => (
-            <div key={index} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
-              <h2 className="font-bold text-xl">{room.title}</h2>
-              <p>{room.description}</p>
-              <p>
-                Rent: <span className="font-semibold">₹{room.rent}</span>
-              </p>
-              <p>Type: {room.type}</p>
-              <p>Address: {room.address}</p>
-              {room.images && room.images.length > 0 && (
-                <div className="flex gap-2 overflow-x-auto mt-2">
-                  {room.images.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={`room-${i}`}
-                      className="w-24 h-24 object-cover rounded"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+        );
+      })}
     </div>
+  )}
+
+  {/* ❤️ Wishlist Count */}
+  {/* <div className="fixed bottom-5 right-5 bg-black text-white px-4 py-2 rounded-full shadow-lg">
+    ❤️ {wishlist.length}
+  </div> */}
+</div>
   );
 };
 

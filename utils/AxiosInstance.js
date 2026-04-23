@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://room-sathi-backend.onrender.com/api', 
-  // baseURL: ' http://localhost:3000/api', 
+  // baseURL: 'https://room-sathi-backend.onrender.com/api', 
+  baseURL: ' http://localhost:3005/api', 
+  
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

@@ -1,120 +1,164 @@
 import React, { useState } from "react";
+import axios from "axios";
+import useAuthStore from "../Store/authStore";
 
 function Addinfo() {
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [phone, setPhone] = useState("");
-  const [loc, setLoc] = useState("");
-  const [gender, setGender] = useState("");
-  const [savedData, setSavedData] = useState(null); // for preview
+  const { id } = useAuthStore();
 
-  const handleSave = () => {
-    const info = { name, bio, birthday, phone, loc, gender };
-    setSavedData(info); // save data to preview
+  const [form, setForm] = useState({
+    name: "",
+    bio: "",
+    birthday: "",
+    phone: "",
+    loc: "",
+    gender: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [savedData, setSavedData] = useState(null);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+
+      const res = await axios.post("/api/user-info", {
+        ...form,
+        userId: id,
+      });
+
+      setSavedData(res.data);
+      alert("✅ Profile Updated Successfully");
+    } catch (err) {
+      console.log(err);
+      alert("❌ Error saving data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className=" w-screen h-full  ">
-      <h2 className="text-lg font-bold bg-blue-700 p-4  text-white">
-        Enter Basic Information
-      </h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 mt-20">
 
-      {/* FORM */}
-      <div className="bg-emerald-200 p-3 pl-4 w-screen h-full ">
-        <div className="p-1">
-          <label htmlFor="fullname">Full Name</label> <br />
-          <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            className="bg-white rounded-xl p-2"
-            type="text"
-            placeholder="John Doe"
-            id="fullname"
-          />
-        </div>
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6">
 
-        <div className="p-1 flex">
-          <div className="px-1">
-            <label htmlFor="birthday">Birthday</label> <br />
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">
+          👤 Complete Your Profile
+        </h2>
+
+        {/* FORM */}
+        <div className="space-y-4">
+
+          {/* Name */}
+          <div>
+            <label className="text-sm font-medium">Full Name</label>
             <input
-              onChange={(e) => setBirthday(e.target.value)}
-              value={birthday}
-              className="bg-white rounded-xl p-2"
-              type="date"
-              id="birthday"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              type="text"
+              placeholder="John Doe"
+              className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
-          <div>
-            <label htmlFor="gender">Gender</label> <br />
-            <select
-              onChange={(e) => setGender(e.target.value)}
-              value={gender}
-              className="bg-white rounded-xl p-2"
-              id="gender"
-            >
-              <option value="">--Choose--</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
+
+          {/* Birthday + Gender */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="text-sm font-medium">Birthday</label>
+              <input
+                name="birthday"
+                value={form.birthday}
+                onChange={handleChange}
+                type="date"
+                className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="text-sm font-medium">Gender</label>
+              <select
+                name="gender"
+                value={form.gender}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
           </div>
+
+          {/* Phone */}
+          <div>
+            <label className="text-sm font-medium">Phone</label>
+            <input
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              type="tel"
+              placeholder="9876543210"
+              className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label className="text-sm font-medium">Bio</label>
+            <textarea
+              name="bio"
+              value={form.bio}
+              onChange={handleChange}
+              rows="3"
+              placeholder="Tell something about yourself..."
+              className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Location */}
+          <div>
+            <label className="text-sm font-medium">Location</label>
+            <input
+              name="loc"
+              value={form.loc}
+              onChange={handleChange}
+              type="text"
+              placeholder="Noida, Delhi"
+              className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Button */}
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition hover:scale-105 disabled:opacity-50"
+          >
+            {loading ? "Saving..." : "Save Information"}
+          </button>
         </div>
 
-        <div className="p-1">
-          <label htmlFor="phone">Phone</label> <br />
-          <input
-            onChange={(e) => setPhone(e.target.value)}
-            value={phone}
-            className="bg-white rounded-xl p-2"
-            type="number"
-            placeholder="9876543210"
-            id="phone"
-          />
-        </div>
+        {/* PREVIEW */}
+        {savedData && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-xl border">
+            <h3 className="text-lg font-semibold mb-3">Preview</h3>
 
-        <div className="p-1">
-          <label htmlFor="bio">Bio</label> <br />
-          <textarea
-            onChange={(e) => setBio(e.target.value)}
-            value={bio}
-            className="bg-white rounded-xl p-2"
-            placeholder="Student of B.Tech final year"
-            id="bio"
-          />
-        </div>
+            <div className="space-y-1 text-sm">
+              <p><b>Name:</b> {savedData.name}</p>
+              <p><b>Birthday:</b> {savedData.birthday}</p>
+              <p><b>Gender:</b> {savedData.gender}</p>
+              <p><b>Phone:</b> {savedData.phone}</p>
+              <p><b>Bio:</b> {savedData.bio}</p>
+              <p><b>Location:</b> {savedData.loc}</p>
+            </div>
+          </div>
+        )}
 
-        <div className="p-1">
-          <label htmlFor="loc">Location</label> <br />
-          <input
-            onChange={(e) => setLoc(e.target.value)}
-            value={loc}
-            className="bg-white rounded-xl p-2"
-            type="text"
-            placeholder="Pari Chowk Sec-32 Noida"
-            id="loc"
-          />
-        </div>
-
-        <button
-          onClick={handleSave}
-          className="bg-blue-700 text-white rounded-2xl px-3 py-2 my-3"
-        >
-          SAVE
-        </button>
-      </div> 
-
-
-      {savedData && (
-        <div className="bg-gray-100 mt-4 p-4 rounded-xl    shadow">
-          <h3 className="font-bold text-lg">Preview</h3>
-          <p><b>Name:</b> {savedData.name}</p>
-          <p><b>Birthday:</b> {savedData.birthday}</p>
-          <p><b>Gender:</b> {savedData.gender}</p>
-          <p><b>Phone:</b> {savedData.phone}</p>
-          <p><b>Bio:</b> {savedData.bio}</p>
-          <p><b>Location:</b> {savedData.loc}</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -56,11 +56,9 @@ function Login_Signup() {
   const otpMutation = useMutation({
     mutationFn: () => {
       const formData = new FormData();
-      formData.append("username", userInfo.username);
-      formData.append("email", userInfo.email);
-      formData.append("password", userInfo.password);
-      formData.append("otp", userInfo.otp);
-      if (userInfo.image) formData.append("image", userInfo.image);
+      Object.entries(userInfo).forEach(([key, val]) => {
+        if (val) formData.append(key, val);
+      });
       return verifyOtpApi(formData);
     },
     onSuccess: (data) => {
@@ -73,7 +71,8 @@ function Login_Signup() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: () => loginWithPasswordApi({ email: userInfo.email, password: userInfo.password }),
+    mutationFn: () =>
+      loginWithPasswordApi({ email: userInfo.email, password: userInfo.password }),
     onSuccess: (data) => {
       login({ ...data.userInfo, token: data.token });
       navigate("/");
@@ -85,13 +84,9 @@ function Login_Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isLogin) {
-      loginMutation.mutate();
-    } else if (isOtp) {
-      otpMutation.mutate();
-    } else {
-      registerMutation.mutate();
-    }
+    if (isLogin) loginMutation.mutate();
+    else if (isOtp) otpMutation.mutate();
+    else registerMutation.mutate();
   };
 
   useEffect(() => {
@@ -107,125 +102,119 @@ function Login_Signup() {
   };
 
   return (
-    <div className="w-[430px] bg-white p-8 rounded-2xl shadow-lg">
-      <div className="flex justify-center mb-4">
-        <h2 className="text-3xl font-semibold">
-          {isLogin ? "Login" : isOtp ? "Verify OTP" : "SignUp"}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-gray-200">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          {isLogin ? "Welcome Back" : isOtp ? "Verify OTP" : "Create Account"}
         </h2>
-      </div>
 
-      {!isOtp && (
-        <div className="relative flex h-12 mb-6 border border-gray-300 rounded-full overflow-hidden">
-          <button
-            onClick={() => setIsLogin(true)}
-            className={`w-1/2 text-lg font-medium transition-all z-10 ${
-              isLogin ? "text-white" : "text-black"
-            }`}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setIsLogin(false)}
-            className={`w-1/2 text-lg font-medium transition-all z-10 ${
-              !isLogin ? "text-black" : "text-black"
-            }`}
-          >
-            Signup
-          </button>
-          <div className="absolute top-0 h-full w-1/2 rounded-full bg-gradient-to-r from-blue-700 via-cyan-600 to-cyan-200"></div>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {!isLogin && !isOtp && (
-          <>
-            <input
-              name="username"
-              value={userInfo.username}
-              onChange={handleInputChange}
-              className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-cyan-500 placeholder-gray-400"
-              placeholder="Enter Username"
-              type="text"
-            />
-            <input
-              name="image"
-              onChange={handleInputChange}
-              className="w-full p-2"
-              type="file"
-              accept="image/*"
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-20 h-20 rounded-full object-cover mt-2"
-              />
-            )}
-          </>
-        )}
-
-        <input
-          name="email"
-          value={userInfo.email}
-          onChange={handleInputChange}
-          className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-cyan-500 placeholder-gray-400"
-          placeholder="Enter email"
-          type="text"
-        />
-        <input
-          name="password"
-          value={userInfo.password}
-          onChange={handleInputChange}
-          className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-cyan-500 placeholder-gray-400"
-          placeholder="Enter password"
-          type="password"
-        />
-
-        {isOtp && (
-          <>
-            <input
-              name="otp"
-              value={userInfo.otp}
-              onChange={handleInputChange}
-              className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-cyan-500 placeholder-gray-400"
-              placeholder="Enter OTP"
-              type="text"
-            />
+        {!isOtp && (
+          <div className="flex mb-6 bg-gray-100 rounded-full p-1">
             <button
-              type="button"
-              onClick={resendOtp}
-              className="text-cyan-600 hover:underline mt-2"
-              disabled={otpCountdown > 0}
+              onClick={() => setIsLogin(true)}
+              className={`w-1/2 py-2 rounded-full transition-all ${
+                isLogin ? "bg-blue-600 text-white shadow" : "text-gray-600"
+              }`}
             >
-              {otpCountdown > 0 ? `Resend OTP in ${otpCountdown}s` : "Resend OTP"}
+              Login
             </button>
-          </>
+            <button
+              onClick={() => setIsLogin(false)}
+              className={`w-1/2 py-2 rounded-full transition-all ${
+                !isLogin ? "bg-blue-600 text-white shadow" : "text-gray-600"
+              }`}
+            >
+              Signup
+            </button>
+          </div>
         )}
 
-        {errorMsg && (
-          <p className="text-red-500 text-sm text-center">{errorMsg}</p>
-        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && !isOtp && (
+            <>
+              <input
+                name="username"
+                value={userInfo.username}
+                onChange={handleInputChange}
+                placeholder="Username"
+                className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
 
-        <button
-          type="submit"
-          className="w-full p-3 bg-gradient-to-r from-blue-700 via-cyan-600 to-cyan-200 text-white text-lg rounded-full hover:opacity-90 transition"
-          disabled={
-            registerMutation.isPending ||
+              <input
+                name="image"
+                type="file"
+                onChange={handleInputChange}
+                className="text-sm"
+              />
+
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  className="w-16 h-16 rounded-full object-cover mx-auto"
+                />
+              )}
+            </>
+          )}
+
+          <input
+            name="email"
+            value={userInfo.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+          <input
+            name="password"
+            type="password"
+            value={userInfo.password}
+            onChange={handleInputChange}
+            placeholder="Password"
+            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+          {isOtp && (
+            <>
+              <input
+                name="otp"
+                value={userInfo.otp}
+                onChange={handleInputChange}
+                placeholder="Enter OTP"
+                className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              <button
+                type="button"
+                onClick={resendOtp}
+                disabled={otpCountdown > 0}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                {otpCountdown > 0
+                  ? `Resend OTP in ${otpCountdown}s`
+                  : "Resend OTP"}
+              </button>
+            </>
+          )}
+
+          {errorMsg && (
+            <p className="text-red-500 text-sm text-center">{errorMsg}</p>
+          )}
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+          >
+            {registerMutation.isPending ||
             otpMutation.isPending ||
             loginMutation.isPending
-          }
-        >
-          {registerMutation.isPending ||
-          otpMutation.isPending ||
-          loginMutation.isPending
-            ? "Processing..."
-            : isOtp
-            ? "Verify OTP"
-            : isLogin
-            ? "Login"
-            : "Signup"}
-        </button>
-      </form>
+              ? "Processing..."
+              : isOtp
+              ? "Verify OTP"
+              : isLogin
+              ? "Login"
+              : "Signup"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

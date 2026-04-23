@@ -1,41 +1,52 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+
+const initialUser = {
+  id: null,
+  name: null,
+  email: null,
+  role: null,
+};
 
 const useAuthStore = create(
   persist(
     immer((set, get) => ({
-      name:null,
-      id:null,
-      email:null,
+      user: initialUser,
       token: null,
-      role:null,
 
+      // LOGIN
       login: (data) => {
-        // console.log(data);
-        
         set((state) => {
           state.token = data.token;
-          state.name=data.username;
-          state.id=data._id;
-          state.role=data.role;
-          state.email=data.email;
+          state.user = {
+            id: data._id,
+            name: data.username,
+            email: data.email,
+            role: data.role,
+          };
         });
       },
 
-      // Logout: clear user and token
+      // LOGOUT
       logout: () => {
         set((state) => {
-          state.user = null;
           state.token = null;
-          state.role=null;
+          state.user = initialUser;
         });
       },
 
-      // Synchronous check if user has a token
+      // UPDATE PROFILE (future use)
+      updateUser: (newData) => {
+        set((state) => {
+          state.user = { ...state.user, ...newData };
+        });
+      },
+
+      // SIMPLE CHECK
       isLoggedIn: () => !!get().token,
 
-      // Async check with hydration
+      // SAFE AUTH CHECK (after hydration)
       isAuthenticated: async () => {
         if (!useAuthStore.persist.hasHydrated()) {
           await new Promise((resolve) => {
@@ -49,8 +60,12 @@ const useAuthStore = create(
       },
     })),
     {
-      name: 'auth-storage', // localStorage key
-      storage: createJSONStorage(() => window.localStorage), // use localStorage in React
+      name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+      }), // only persist required data
     }
   )
 );

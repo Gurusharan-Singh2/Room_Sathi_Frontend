@@ -1,83 +1,56 @@
-import React, { useCallback, useState } from 'react'
-import { Icons } from '../../utils/icon'
+import React from "react";
 
+const RoomCard = ({ room }) => {
+  // ✅ HARD SAFETY CHECK (prevents crash 100%)
+  if (!room || typeof room !== "object") {
+    console.warn("RoomCard received invalid room:", room);
+    return null;
+  }
 
-const RoomCard = ({data,isHover}) => {
-
-    const [image,setImage] =useState(0)
-
-    const handleNext=()=>{
-        if(!data.image[image+1]){
-           return;
-        }else{
-  setImage((p)=>
-        
-        p=p+1)
-        }
-
-        
-        
-      
-        
-    }
-    const handleBack=()=>{
-        if(!data.image[image-1]){
-           return;
-        }else{
-  setImage((p)=>
-        
-        p=p-1)
-        }
-
-        
-        
-      
-        
-    }
-
+ const image =
+  Array.isArray(room.image) && room.image.length > 0
+    ? room.image[0]
+    : "/fallback.jpg";  
     
-
-    
-   
   return (
-    <div  className=' border bg-gray-100 text-black h-auto  min-w-[25%]  rounded-2xl border-none hover:border-none hover:shadow-lg transition duration-300'>
-                  <img className='rounded-t-2xl' src={data.image[image]} alt="room picture" />
+    <div className="bg-white rounded-xl shadow-md p-4 w-80">
+      <img
+        src={image}
+        alt={room.title || "Room"}
+        className="w-full h-48 object-cover rounded-lg"
+      />
 
-        <div className='flex justify-between flex-1 mt-3'>
-            <button className='bg-amber-700 text-white p-1 rounded-lg' onClick={handleBack}>Back</button>
-            <button className='bg-green-700 text-white p-1 rounded-lg' onClick={()=>handleNext()}>Next</button>
-            
-            </div>          
-    
-          <div className='flex flex-col gap-2 p-2'>
-              <h2 className='text-xl font-bold pt-6'>{data.title}</h2>
-            <p className="text-sm">{data.description}</p>
+      <h2 className="font-bold text-xl mt-2">
+        {room.title || "No Title"}
+      </h2>
 
-            <div className='w-full flex justify-between border-b border-gray-300 my-2'>
-                <div>
-                    <h2 className='text-basic'><span className='text-xl font-extrabold text-blue-500 '>₹{data.price}</span>/month</h2>
-                </div>
-                <div>
-                    {data.status}
-                </div>
-            </div>
-            <div className=' flex gap-6 '>
-                {data.services.map((a)=>{
-                    const l=Icons.find((i)=>i.title===a)
-                    return <div className='flex gap-1'>
-                      
-                        {<l.icon className='text-blue-500 text-sm' size={18} />}
-                        <p className='text-xs text-gray-5'>  {l.title}</p>
+      <p className="text-gray-600">
+        {room.description || "No description"}
+      </p>
 
-                    </div>
-                })}
-            </div>
-            <button className={` bg-blue-300/92 rounded-full py-2 px-4  text-base font-semibold  text-blue-600 `}>View Details</button>
-    
-          </div>
-          </div>
-  )
-}
+      <p className="mt-1 font-semibold">
+        ₹{room.price || room.rent || 0} / month
+      </p>
 
-export default RoomCard
+      <p className="text-sm text-gray-500">
+        {room.type || "Unknown"}
+      </p>
 
+      {/* Services */}
+      {Array.isArray(room.services) && room.services.length > 0 && (
+        <div className="flex gap-2 mt-2 flex-wrap">
+          {room.services.map((service, i) => (
+            <span
+              key={i}
+              className="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
+            >
+              {service}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RoomCard;
