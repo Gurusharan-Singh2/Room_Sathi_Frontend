@@ -6,6 +6,7 @@ import room2 from "../assets/room4.jpg";
 import room3 from "../assets/room6.jpg";
 
 import { useNavigate } from "react-router-dom";
+import PremiumChatBot from "../Components/PremiumChatBot";
 
 const HomePage = () => {
   const [address, setAddress] = useState("");
@@ -239,6 +240,8 @@ const HomePage = () => {
             View All Rooms →
           </button>
         </div>
+
+        <PremiumChatBot />
       </div>
 
       <Footer />

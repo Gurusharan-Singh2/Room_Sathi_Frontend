@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { getrooms } from "../../utils/fetchapis";
 
@@ -7,13 +6,11 @@ const Showroom = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load wishlist from localStorage
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(saved);
   }, []);
 
-  // ✅ Fetch rooms
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true);
@@ -45,9 +42,22 @@ const Showroom = () => {
     localStorage.setItem("wishlist", JSON.stringify(updated));
   };
 
-  // ❤️ Check if saved
   const isSaved = (id) => {
     return wishlist.some((item) => item._id === id);
+  };
+
+  // ✅ WhatsApp handler
+  const handleWhatsApp = (room) => {
+    if (!room.phone) {
+      alert("Owner contact not available");
+      return;
+    }
+
+    const message = encodeURIComponent(
+      `Hi, I'm interested in your room: ${room.title} located at ${room.address}. Is it still available?`
+    );
+
+    window.open(`https://wa.me/${room.phone}?text=${message}`, "_blank");
   };
 
   return (
@@ -75,7 +85,7 @@ const Showroom = () => {
                   className="w-full h-52 object-cover"
                 />
 
-                {/* ❤️ Wishlist button */}
+                {/* ❤️ Wishlist */}
                 <button
                   onClick={() => toggleWishlist(room)}
                   className="absolute top-3 right-3 text-2xl"
@@ -83,7 +93,7 @@ const Showroom = () => {
                   {isSaved(room._id) ? "❤️" : "🤍"}
                 </button>
 
-                {/* Status badge */}
+                {/* Status */}
                 <span className="absolute bottom-3 left-3 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
                   {room.status}
                 </span>
@@ -96,12 +106,10 @@ const Showroom = () => {
                   {room.description}
                 </p>
 
-                {/* Price */}
                 <p className="mt-3 text-lg font-semibold text-green-600">
                   ₹{room.price} / month
                 </p>
 
-                {/* Address */}
                 <p className="text-sm text-gray-500 mt-1">
                   📍 {room.address}
                 </p>
@@ -123,6 +131,27 @@ const Showroom = () => {
                     </span>
                   )}
                 </div>
+
+                {/* ✅ Buttons Section */}
+                <div className="flex gap-2 mt-4">
+                  {/* WhatsApp */}
+                  <button
+                    onClick={() => handleWhatsApp(room)}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm font-medium"
+                  >
+                    📲 WhatsApp
+                  </button>
+
+                  {/* Call Button (optional) */}
+                  {room.phone && (
+                    <a
+                      href={`tel:${room.phone}`}
+                      className="flex-1 text-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm font-medium"
+                    >
+                      📞 Call
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -138,4 +167,3 @@ const Showroom = () => {
 };
 
 export default Showroom;
-
