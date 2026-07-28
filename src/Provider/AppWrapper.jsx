@@ -11,12 +11,14 @@ import PostRoom from "../pages/PostRoom";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Showroom from "../pages/Showroom";
+import RoomDetails from "../pages/RoomDetails";
+import Profile from "../pages/Profile";
 import Addinfo from "../Components/Addinfo";
 import { RoommateList } from "../pages/RoommateList";
 import { PostRoommate } from "../pages/Postroommate";
 
 const AppWrapper = () => {
-  const { login, isLoggedIn,id } = useAuthStore();
+  const { login, isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
 
   
@@ -56,7 +58,9 @@ useEffect(() => {
       <Route path="/contact" element={<Contact/>} />
       <Route path="/find-room" element={<Showroom/>} />
       <Route path="/find-rooms" element={<FindRoom/>} />
+      <Route path="/room/:id" element={<RoomDetails/>} />
       <Route path="/info-form" element={<Addinfo/>} />
+      <Route path="/profile" element={<Profile/>} />
 
     </Routes>
   </>

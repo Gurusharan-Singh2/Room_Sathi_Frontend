@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../Store/authStore";
+import { updateUserInfoApi } from "../../utils/apis";
 
 function Addinfo() {
-  const { id } = useAuthStore();
+  const { user } = useAuthStore();
+  const id = user?.id;
+  const queryClient = useQueryClient();
 
   const [form, setForm] = useState({
     name: "",
@@ -14,30 +17,30 @@ function Addinfo() {
     gender: "",
   });
 
-  const [loading, setLoading] = useState(false);
   const [savedData, setSavedData] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-
-      const res = await axios.post("/api/user-info", {
-        ...form,
-        userId: id,
-      });
-
-      setSavedData(res.data);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data) => updateUserInfoApi(data),
+    onSuccess: (updatedUser) => {
+      // profile route is Redis-cached server-side; refresh the cached
+      // react-query copy so the UI (navbar, dropdown) picks up the change
+      queryClient.invalidateQueries({ queryKey: ["profile", id] });
+      setSavedData(updatedUser);
       alert("✅ Profile Updated Successfully");
-    } catch (err) {
+    },
+    onError: (err) => {
       console.log(err);
       alert("❌ Error saving data");
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleSave = () => {
+    // userId is derived server-side from the JWT, not from the request body
+    mutate(form);
   };
 
   return (
@@ -135,10 +138,10 @@ function Addinfo() {
           {/* Button */}
           <button
             onClick={handleSave}
-            disabled={loading}
+            disabled={isPending}
             className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition hover:scale-105 disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Information"}
+            {isPending ? "Saving..." : "Save Information"}
           </button>
         </div>
 

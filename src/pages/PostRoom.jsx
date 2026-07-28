@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addRoomApi } from "../../utils/apis";
 
 const PostRoom = () => {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -14,8 +16,32 @@ const PostRoom = () => {
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  const { mutate: postRoom, isPending: loading } = useMutation({
+    mutationFn: (data) => addRoomApi(data),
+    onSuccess: () => {
+      // new room was created — cached room lists are stale on the client too
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+
+      setMessage("✅ Room posted successfully");
+      setFormData({
+        title: "",
+        description: "",
+        price: "",
+        status: "",
+        address: "",
+        services: [],
+        phone: "",
+      });
+      setImage(null);
+      setPreview(null);
+    },
+    onError: (err) => {
+      console.error(err);
+      setMessage(err.response?.data?.message || "❌ Failed");
+    },
+  });
 
   const servicesList = [
     "Wifi",
@@ -74,65 +100,36 @@ const PostRoom = () => {
   };
 
   // submit
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setMessage("");
 
-    try {
-      setLoading(true);
-      setMessage("");
-
-      // ✅ validate phone
-      if (!formData.phone) {
-        setMessage("❌ Phone number is required");
-        return;
-      }
-
-      const formattedPhone = formatPhone(formData.phone);
-
-      if (formattedPhone.length < 12) {
-        setMessage("❌ Enter valid phone number");
-        return;
-      }
-
-      const data = new FormData();
-
-      data.append("title", formData.title);
-      data.append("description", formData.description);
-      data.append("price", formData.price);
-      data.append("status", formData.status);
-      data.append("address", formData.address);
-      data.append("phone", formattedPhone); // ✅ send phone
-
-      data.append("services", JSON.stringify(formData.services));
-      data.append("image", image);
-
-      const res = await axios.post(
-        "http://localhost:3005/api/room",
-        data
-      );
-
-      setMessage("✅ Room posted successfully");
-
-      // reset
-      setFormData({
-        title: "",
-        description: "",
-        price: "",
-        status: "",
-        address: "",
-        services: [],
-        phone: "",
-      });
-
-      setImage(null);
-      setPreview(null);
-
-    } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.message || "❌ Failed");
-    } finally {
-      setLoading(false);
+    // ✅ validate phone
+    if (!formData.phone) {
+      setMessage("❌ Phone number is required");
+      return;
     }
+
+    const formattedPhone = formatPhone(formData.phone);
+
+    if (formattedPhone.length < 12) {
+      setMessage("❌ Enter valid phone number");
+      return;
+    }
+
+    const data = new FormData();
+
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("price", formData.price);
+    data.append("status", formData.status);
+    data.append("address", formData.address);
+    data.append("phone", formattedPhone); // ✅ send phone
+
+    data.append("services", JSON.stringify(formData.services));
+    data.append("image", image);
+
+    postRoom(data);
   };
 
   return (

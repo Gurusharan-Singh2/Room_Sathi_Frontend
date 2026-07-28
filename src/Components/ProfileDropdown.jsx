@@ -6,7 +6,8 @@ import { fetchProfile } from "../../utils/apis";
 
 function ProfileDropdown() {
   const navigate = useNavigate();
-  const { id, logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const id = user?.id;
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -41,11 +42,11 @@ function ProfileDropdown() {
         className="w-11 h-11 rounded-full cursor-pointer overflow-hidden 
         ring-2 ring-blue-500 shadow hover:scale-110 transition duration-200"
       >
-        {profile?.signedUrl ? (
-          <img src={profile.signedUrl} alt="avatar" className="w-full h-full object-cover" />
+        {profile?.image ? (
+          <img src={profile.image} alt="avatar" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold">
-            {profile?.name?.charAt(0)?.toUpperCase() || "U"}
+            {profile?.username?.charAt(0)?.toUpperCase() || "U"}
           </div>
         )}
       </div>
@@ -57,11 +58,11 @@ function ProfileDropdown() {
           {/* 👤 Profile Header */}
           <div className="p-5 text-center bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
             <div className="w-16 h-16 mx-auto rounded-full overflow-hidden mb-3 ring-2 ring-white">
-              {profile?.signedUrl ? (
-                <img src={profile.signedUrl} alt="profile" className="w-full h-full object-cover" />
+              {profile?.image ? (
+                <img src={profile.image} alt="profile" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-white text-blue-600 flex items-center justify-center text-xl font-bold">
-                  {profile?.name?.charAt(0)?.toUpperCase() || "U"}
+                  {profile?.username?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}
             </div>
@@ -72,7 +73,7 @@ function ProfileDropdown() {
 
           {/* 📊 Extra Info */}
           <div className="px-5 py-3 text-sm text-gray-600 space-y-1">
-            <p>📍 City: {profile?.city || "Not added"}</p>
+            <p>📍 Location: {profile?.loc || "Not added"}</p>
             <p>📞 Phone: {profile?.phone || "Not added"}</p>
             <p>👤 Gender: {profile?.gender || "Not specified"}</p>
           </div>

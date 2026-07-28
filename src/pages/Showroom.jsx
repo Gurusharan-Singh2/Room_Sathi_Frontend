@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { getrooms } from "../../utils/fetchapis";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchRooms } from "../../utils/apis";
 
 const Showroom = () => {
-  const [rooms, setRooms] = useState([]);
+  const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  const {
+    data: rooms = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: fetchRooms,
+  });
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(saved);
-  }, []);
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      setLoading(true);
-      try {
-        const data = await getrooms();
-        setRooms(data?.rooms || []);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRooms();
   }, []);
 
   // ❤️ Toggle wishlist
@@ -134,6 +128,14 @@ const Showroom = () => {
 
                 {/* ✅ Buttons Section */}
                 <div className="flex gap-2 mt-4">
+                  {/* View Details */}
+                  <button
+                    onClick={() => navigate(`/room/${room._id}`)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg text-sm font-medium"
+                  >
+                    🔍 Details
+                  </button>
+
                   {/* WhatsApp */}
                   <button
                     onClick={() => handleWhatsApp(room)}

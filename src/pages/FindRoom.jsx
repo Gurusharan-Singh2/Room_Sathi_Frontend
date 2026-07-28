@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { searchRoomsApi } from "../../utils/apis";
 
 const FindRoom = () => {
   const location = useLocation();
-
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
 
@@ -14,29 +13,10 @@ const FindRoom = () => {
   const area = queryParams.get("area") || "";
   const status = queryParams.get("status") || "";
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        setLoading(true);
-
-        console.log("Sending Query:", { address, area, status }); // 🔍 DEBUG
-
-        const res = await axios.get(
-          `http://localhost:3005/api/rooms?address=${address}&area=${area}&status=${status}`
-        );
-
-        console.log("Response:", res.data);
-
-        setRooms(res.data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRooms();
-  }, [address, area, status]);
+  const { data: rooms = [], isLoading: loading } = useQuery({
+    queryKey: ["rooms", "search", address, area, status],
+    queryFn: () => searchRoomsApi({ address, area, status }),
+  });
 
   return (
   <div className="min-h-screen bg-gradient-to-br mt-20 w-full from-gray-100 to-gray-200 p-6">
@@ -123,6 +103,13 @@ const FindRoom = () => {
                   </span>
                 )}
               </div>
+
+              <button
+                onClick={() => navigate(`/room/${room._id}`)}
+                className="w-full mt-4 bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg text-sm font-medium"
+              >
+                🔍 View Details
+              </button>
             </div>
           </div>
         );
